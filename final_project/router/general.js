@@ -41,10 +41,10 @@ public_users.get('/', function (req, res) {
 
 async function fetchData() {
     try {
-        const response = await axios.get("https://keerthanakat-5000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/");
+        const response = await axios.get("https://keerthanakat-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/");
         console.log("Task 10 - fetch data using async/await axios", response.data)
     } catch (error) {
-        console.error("Error fetching data", error)
+        console.error("Error fetching data", error.response.data)
     }
 }
 fetchData()
@@ -56,13 +56,16 @@ public_users.get('/isbn/:isbn', function (req, res) {
     res.status(200).send(JSON.stringify(books[requestedISBN], null, 4));
 });
 
-const fetchDataByISBNWithPromiseAxios = (isbn)=>{
-    axios.get(`https://keerthanakat-5000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/isbn/${isbn}`)
-        .then((response) => console.log("task 12",response.data))
-        .catch((error) => console.error("error fetching data", error))
+// promise with axios
+const fetchDataByISBNWithPromiseAxios = (isbn) => {
+    axios.get(`https://keerthanakat-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/isbn/${isbn}`)
+        .then((response) => console.log("task 11", response.data))
+        .catch((error) => console.error("error fetching data", error.response.data))
 }
 
 fetchDataByISBNWithPromiseAxios(3)
+
+// async/await with axios
 
 // async function fetchDataByISBN(isbn) {
 //     try {
@@ -73,7 +76,6 @@ fetchDataByISBNWithPromiseAxios(3)
 //     }
 // }
 // fetchDataByISBN(2)
-
 
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
@@ -87,6 +89,16 @@ public_users.get('/author/:author', function (req, res) {
     res.status(200).send(JSON.stringify(dataByAuthor, null, 4));
 });
 
+async function fetchDataByAuthor(author) {
+    try {
+        const response = await axios.get(`https://keerthanakat-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/author/${author}`);
+        console.log("Task 12 - fetch data using async/await with axios", response.data)
+    } catch (error) {
+        console.error("Error fetching data", error.response.data)
+    }
+}
+fetchDataByAuthor("Unknown")
+
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
     //Write your code here
@@ -99,6 +111,14 @@ public_users.get('/title/:title', function (req, res) {
     }
     res.status(200).send(JSON.stringify(dataByTitle, null, 4));
 });
+
+const fetchDataBytitleWithPromiseAxios = (title) => {
+    axios.get(`https://keerthanakat-5000.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai/title/${title}`)
+        .then((response) => console.log("task 13", response.data))
+        .catch((error) => console.error("error fetching data", error.response.data))
+}
+
+fetchDataBytitleWithPromiseAxios("Molloy, Malone Dies, The Unnamable, the trilogy")
 
 //  Get book review
 public_users.get('/review/:isbn', function (req, res) {
