@@ -21,6 +21,7 @@ const authenticatedUser = (username, password) => { //returns boolean
 
 //only registered users can login
 regd_users.post("/login", (req, res) => {
+    console.log("login entered")
     //Write your code here
     const username = req.body.username;
     const password = req.body.password;
@@ -33,7 +34,8 @@ regd_users.post("/login", (req, res) => {
         }, 'access', { expiresIn: 60 * 60 });
 
         req.session.authorization = {
-            accessToken
+            accessToken,
+            username
         }
         return res.status(200).send("User successfully logged in");
     } else {
@@ -44,8 +46,31 @@ regd_users.post("/login", (req, res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
     //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+    console.log("entered")
+    const receivedReview = req.query.review;
+    const providedIsbn = req.params.isbn;
+    const reviewer = req.session.authorization['username'];
+    let foundExsistingUserReview = false;
+    if (Object.keys(books[providedIsbn].reviews).length > 0) {
+        for (let key in books[providedIsbn].reviews) {
+            if (key === reviewer) {
+                foundExsistingUserReview = true;
+                books[providedIsbn].reviews[reviewer] = receivedReview
+            }
+        }
+        if (!foundExsistingUserReview) books[providedIsbn].reviews[reviewer] = receivedReview;
+    } else if (Object.keys(books[providedIsbn].reviews).length == 0) {
+        books[providedIsbn].reviews[reviewer] = receivedReview;
+    }
+    res.status(200).send("Review was updated successfully");
 });
+
+regd_users.delete("/auth/review/:isbn", (req,res)=>{
+    const providedIsbn = req.params.isbn;
+    const reviewer = req.session.authorization['username'];
+    delete books[providedIsbn].reviews[reviewer]
+    res.status(200).send("deleted successfully")
+})
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
